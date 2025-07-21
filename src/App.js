@@ -272,140 +272,150 @@ END:VEVENT`;
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           
           {/* Public Header */}
-          <header style={{ textAlign: 'center', color: 'white', marginBottom: '60px', padding: '40px 0' }}>
-            <h1 style={{ fontSize: '4rem', marginBottom: '20px', textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>🎵 SoundStories</h1>
-            <p style={{ fontSize: '1.5rem', opacity: 0.9, marginBottom: '10px' }}>
-              Curated music recommendations with stories
-            </p>
-            <p style={{ fontSize: '1.1rem', opacity: 0.8, maxWidth: '600px', margin: '0 auto' }}>
-              Discover new music every week through your calendar. Each recommendation comes with the story behind the song.
-            </p>
-          </header>
+<header style={{ textAlign: 'center', color: 'white', marginBottom: '60px', padding: '40px 0', position: 'relative' }}>
+  {/* Admin Button - Top Right */}
+  <a 
+    href="/?admin=true"
+    style={{
+      position: 'absolute',
+      top: '20px',
+      right: '20px',
+      background: 'rgba(255,255,255,0.2)',
+      color: 'white',
+      padding: '8px 16px',
+      borderRadius: '20px',
+      textDecoration: 'none',
+      fontSize: '14px',
+      fontWeight: '600',
+      backdropFilter: 'blur(10px)',
+      border: '1px solid rgba(255,255,255,0.3)',
+      transition: 'all 0.3s ease'
+    }}
+    onMouseEnter={(e) => {
+      e.target.style.background = 'rgba(255,255,255,0.3)';
+      e.target.style.transform = 'translateY(-2px)';
+    }}
+    onMouseLeave={(e) => {
+      e.target.style.background = 'rgba(255,255,255,0.2)';
+      e.target.style.transform = 'translateY(0)';
+    }}
+  >
+    🔐 Admin
+  </a>
 
+  <h1 style={{ fontSize: '4rem', marginBottom: '20px', textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>🎵 SoundStories</h1>
+  <p style={{ fontSize: '1.5rem', opacity: 0.9, marginBottom: '10px' }}>
+    Curated music recommendations with stories
+  </p>
+  <p style={{ fontSize: '1.1rem', opacity: 0.8, maxWidth: '600px', margin: '0 auto' }}>
+    Discover new music every week through your calendar. Each recommendation comes with the story behind the song.
+  </p>
+</header>
+
+    
           {/* Subscribe Section */}
-          {calendarUrl && (
-            <div style={{ background: 'white', borderRadius: '20px', padding: '40px', boxShadow: '0 20px 40px rgba(0,0,0,0.1)', marginBottom: '40px' }}>
-              <h2 style={{ marginBottom: '30px', color: '#4a5568', textAlign: 'center', fontSize: '2rem' }}>📅 Subscribe to Weekly Recommendations</h2>
-              
-              <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', padding: '30px', borderRadius: '15px', marginBottom: '30px' }}>
-                <h3 style={{ marginBottom: '20px', textAlign: 'center' }}>🎵 One-Click Subscribe</h3>
-                <p style={{ marginBottom: '25px', opacity: 0.9, textAlign: 'center' }}>
-                  Choose your calendar app for instant subscription:
-                </p>
-                
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '25px' }}>
-                  <a 
-                    href={`https://calendar.google.com/calendar/render?cid=${encodeURIComponent(calendarUrl)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ 
-                      background: '#4285f4', 
-                      color: 'white', 
-                      padding: '15px 20px', 
-                      borderRadius: '10px', 
-                      textDecoration: 'none', 
-                      textAlign: 'center',
-                      fontWeight: '600',
-                      fontSize: '16px',
-                      display: 'block',
-                      transition: 'transform 0.2s'
-                    }}
-                    onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
-                    onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
-                  >
-                    📅 Google Calendar
-                  </a>
-                  
-                  <a 
-                    href={`https://outlook.live.com/calendar/0/addcalendar?url=${encodeURIComponent(calendarUrl)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ 
-                      background: '#0078d4', 
-                      color: 'white', 
-                      padding: '15px 20px', 
-                      borderRadius: '10px', 
-                      textDecoration: 'none', 
-                      textAlign: 'center',
-                      fontWeight: '600',
-                      fontSize: '16px',
-                      display: 'block',
-                      transition: 'transform 0.2s'
-                    }}
-                    onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
-                    onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
-                  >
-                    📧 Outlook
-                  </a>
-                  
-                  <a 
-                    href={calendarUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ 
-                      background: '#000000', 
-                      color: 'white', 
-                      padding: '15px 20px', 
-                      borderRadius: '10px', 
-                      textDecoration: 'none', 
-                      textAlign: 'center',
-                      fontWeight: '600',
-                      fontSize: '16px',
-                      display: 'block',
-                      transition: 'transform 0.2s'
-                    }}
-                    onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
-                    onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
-                  >
-                    🍎 Apple Calendar
-                  </a>
-                  
-                  <button 
-                    onClick={() => {
-                      navigator.clipboard.writeText(calendarUrl);
-                      alert('Calendar URL copied to clipboard!');
-                    }}
-                    style={{ 
-                      background: '#48bb78', 
-                      color: 'white', 
-                      padding: '15px 20px', 
-                      border: 'none',
-                      borderRadius: '10px', 
-                      cursor: 'pointer',
-                      fontWeight: '600',
-                      fontSize: '16px',
-                      transition: 'transform 0.2s'
-                    }}
-                    onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
-                    onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
-                  >
-                    📋 Copy URL
-                  </button>
-                </div>
-              </div>
-
-              <div style={{ background: '#f8fafc', padding: '25px', borderRadius: '15px', textAlign: 'center' }}>
-                <h4 style={{ color: '#4a5568', marginBottom: '15px' }}>✨ What You'll Get</h4>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', color: '#4a5568' }}>
-                  <div>
-                    <div style={{ fontSize: '2rem', marginBottom: '10px' }}>🎵</div>
-                    <strong>Weekly Discoveries</strong>
-                    <div style={{ fontSize: '14px', marginTop: '5px' }}>New music recommendations every week</div>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '2rem', marginBottom: '10px' }}>📖</div>
-                    <strong>Stories Behind Songs</strong>
-                    <div style={{ fontSize: '14px', marginTop: '5px' }}>Learn the history and context</div>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '2rem', marginBottom: '10px' }}>🔗</div>
-                    <strong>Direct Links</strong>
-                    <div style={{ fontSize: '14px', marginTop: '5px' }}>Spotify, YouTube, and more</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+<div style={{ background: 'white', borderRadius: '20px', padding: '40px', boxShadow: '0 20px 40px rgba(0,0,0,0.1)', marginBottom: '40px' }}>
+  <h2 style={{ marginBottom: '30px', color: '#4a5568', textAlign: 'center', fontSize: '2rem' }}>📅 Subscribe to Weekly Recommendations</h2>
+  
+  {calendarUrl ? (
+    <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', padding: '30px', borderRadius: '15px', marginBottom: '30px' }}>
+      <h3 style={{ marginBottom: '20px', textAlign: 'center' }}>🎵 One-Click Subscribe</h3>
+      <p style={{ marginBottom: '25px', opacity: 0.9, textAlign: 'center' }}>
+        Choose your calendar app for instant subscription:
+      </p>
+      
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '25px' }}>
+        <a 
+          href={`https://calendar.google.com/calendar/render?cid=${encodeURIComponent(calendarUrl)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ 
+            background: '#4285f4', 
+            color: 'white', 
+            padding: '15px 20px', 
+            borderRadius: '10px', 
+            textDecoration: 'none', 
+            textAlign: 'center',
+            fontWeight: '600',
+            fontSize: '16px',
+            display: 'block'
+          }}
+        >
+          📅 Google Calendar
+        </a>
+        
+        <a 
+          href={`https://outlook.live.com/calendar/0/addcalendar?url=${encodeURIComponent(calendarUrl)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ 
+            background: '#0078d4', 
+            color: 'white', 
+            padding: '15px 20px', 
+            borderRadius: '10px', 
+            textDecoration: 'none', 
+            textAlign: 'center',
+            fontWeight: '600',
+            fontSize: '16px',
+            display: 'block'
+          }}
+        >
+          📧 Outlook
+        </a>
+        
+        <a 
+          href={calendarUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ 
+            background: '#000000', 
+            color: 'white', 
+            padding: '15px 20px', 
+            borderRadius: '10px', 
+            textDecoration: 'none', 
+            textAlign: 'center',
+            fontWeight: '600',
+            fontSize: '16px',
+            display: 'block'
+          }}
+        >
+          🍎 Apple Calendar
+        </a>
+        
+        <button 
+          onClick={() => {
+            navigator.clipboard.writeText(calendarUrl);
+            alert('Calendar URL copied to clipboard!');
+          }}
+          style={{ 
+            background: '#48bb78', 
+            color: 'white', 
+            padding: '15px 20px', 
+            border: 'none',
+            borderRadius: '10px', 
+            cursor: 'pointer',
+            fontWeight: '600',
+            fontSize: '16px'
+          }}
+        >
+          📋 Copy URL
+        </button>
+      </div>
+    </div>
+  ) : (
+    <div style={{ background: '#f8fafc', padding: '30px', borderRadius: '15px', textAlign: 'center' }}>
+      <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🎵</div>
+      <h3 style={{ color: '#4a5568', marginBottom: '15px' }}>Coming Soon!</h3>
+      <p style={{ color: '#718096', marginBottom: '20px' }}>
+        We're preparing amazing music recommendations for you. Check back soon for subscription links!
+      </p>
+      <div style={{ background: '#667eea', color: 'white', padding: '15px', borderRadius: '10px', fontSize: '14px' }}>
+        💡 <strong>Want to be notified when it's ready?</strong><br/>
+        Bookmark this page and check back in a few days.
+      </div>
+    </div>
+  )}
+</div>
 
           {/* Recent Recommendations */}
           <div style={{ background: 'white', borderRadius: '20px', padding: '40px', boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }}>
