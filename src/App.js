@@ -35,6 +35,10 @@ function App() {
     youtubeLink: '',
     scheduledDate: ''
   });
+  const [searchResults, setSearchResults] = useState([]);
+const [showSearchResults, setShowSearchResults] = useState(false);
+const [searchQuery, setSearchQuery] = useState('');
+const [isSearching, setIsSearching] = useState(false);
 
   const ADMIN_EMAIL = 'chris@heroiccontent.com';
   const provider = new GoogleAuthProvider();
@@ -187,7 +191,76 @@ END:VEVENT`;
       setIsGenerating(false);
     }
   };
+// Real Spotify search using Vercel API
+const searchSpotify = async (query) => {
+  if (query.length < 2) return [];
+  
+  setIsSearching(true);
+  
+  try {
+    const response = await fetch(`/api/spotify-search?query=${encodeURIComponent(query)}`);
+    
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    setIsSearching(false);
+    return data.tracks?.items || [];
+  } catch (error) {
+    console.error('Spotify search error:', error);
+    setIsSearching(false);
+    
+    // Fallback to demo results if API fails
+    console.log('🎵 Using demo results due to API error');
+    return getDemoSearchResults(query);
+  }
+};
 
+// Fallback demo results if API fails
+const getDemoSearchResults = (query) => {
+  const demoTracks = [
+    {
+      id: 'demo1',
+      name: 'Bohemian Rhapsody',
+      artists: [{ name: 'Queen' }],
+      album: { 
+        name: 'A Night at the Opera',
+        images: [{ url: 'https://i.scdn.co/image/ab67616d0000b273ce4f1737bc8a646c8c4bd25a' }],
+        release_date: '1975-11-21'
+      },
+      external_urls: { spotify: 'https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh' }
+    }
+  ];
+
+  return demoTracks.filter(track => 
+    track.name.toLowerCase().includes(query.toLowerCase()) ||
+    track.artists[0].name.toLowerCase().includes(query.toLowerCase())
+  );
+};
+
+const handleSpotifySearch = async (query) => {
+  setSearchQuery(query);
+  if (query.length < 2) {
+    setSearchResults([]);
+    setShowSearchResults(false);
+    return;
+  }
+
+  const results = await searchSpotify(query);
+  setSearchResults(results);
+  setShowSearchResults(true);
+};
+
+const selectSpotifyTrack = (track) => {
+  setFormData(prev => ({
+    ...prev,
+    songTitle: `${track.name} - ${track.artists[0].name}`,
+    spotifyLink: track.external_urls.spotify
+  }));
+  setSearchQuery(`${track.name} - ${track.artists[0].name}`);
+  setShowSearchResults(false);
+};
   // Google Sign-In
   const handleGoogleSignIn = async () => {
     try {
@@ -613,14 +686,60 @@ END:VEVENT`;
         <div style={{ background: 'white', borderRadius: '20px', padding: '30px', boxShadow: '0 20px 40px rgba(0,0,0,0.1)', marginBottom: '30px' }}>
           <h2 style={{ marginBottom: '20px', color: '#4a5568' }}>🎯 Add New Recommendation</h2>
           <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '20px' }}>
-            <input 
-              type="text" 
-              placeholder="Song Title & Artist *"
-              value={formData.songTitle}
-              onChange={(e) => setFormData(prev => ({ ...prev, songTitle: e.target.value }))}
-              style={{ width: '100%', padding: '12px', border: '2px solid #e2e8f0', borderRadius: '10px', fontSize: '16px', boxSizing: 'border-box' }}
-              required
-            />
+            <div style={{ position: 'relative' }}>
+  <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600', color: '#2d3748' }}>
+    🎵 Search Spotify
+  </label>
+  <input 
+    type="text" 
+    placeholder="Search for a song or artist..."
+    value={searchQuery}
+    onChange={(e) => handleSpotifySearch(e.target.value)}
+    style={{ width: '100%', padding: '12px', border: '2px solid #e2e8f0', borderRadius: '10px', fontSize: '16px', boxSizing: 'border-box' }}
+  />
+  {isSearching && (
+    <div style={{ position: 'absolute', top: '100%', left: '0', right: '0', background: 'white', border: '2px solid #e2e8f0', borderTop: 'none', borderRadius: '0 0 10px 10px', padding: '12px', textAlign: 'center', zIndex: 1000 }}>
+      🔍 Searching Spotify...
+    </div>
+  )}
+  {showSearchResults && searchResults.length > 0 && (
+    <div style={{ position: 'absolute', top: '100%', left: '0', right: '0', background: 'white', border: '2px solid #e2e8f0', borderTop: 'none', borderRadius: '0 0 10px 10px', maxHeight: '200px', overflowY: 'auto', zIndex: 1000 }}>
+      {searchResults.map(track => (
+        <div 
+          key={track.id}
+          onClick={() => selectSpotifyTrack(track)}
+          style={{ padding: '12px', borderBottom: '1px solid #e2e8f0', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px' }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = '#f8fafc'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
+        >
+          <img 
+            src={track.album.images[0]?.url || 'https://via.placeholder.com/40'} 
+            alt={track.name}
+            style={{ width: '40px', height: '40px', borderRadius: '4px' }}
+          />
+          <div>
+            <div style={{ fontWeight: '600', fontSize: '14px' }}>{track.name}</div>
+            <div style={{ color: '#718096', fontSize: '12px' }}>{track.artists[0].name}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
+<div>
+  <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600', color: '#2d3748' }}>
+    Song Title & Artist *
+  </label>
+  <input 
+    type="text" 
+    placeholder="e.g., Bohemian Rhapsody - Queen"
+    value={formData.songTitle}
+    onChange={(e) => setFormData(prev => ({ ...prev, songTitle: e.target.value }))}
+    style={{ width: '100%', padding: '12px', border: '2px solid #e2e8f0', borderRadius: '10px', fontSize: '16px', boxSizing: 'border-box' }}
+    required
+  />
+</div>
             <textarea 
               placeholder="Story behind this recommendation *" 
               rows="4"
